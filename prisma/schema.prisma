@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model admins {
+  id       Int    @id @default(autoincrement())
+  login    String @unique(map: "admins_username_key") @db.VarChar(60)
+  password String @db.VarChar(60)
+  role     Role   @default(viewer)
+  refresh_token     String  @db.VarChar(255)
+}
+
+enum Role {
+  viewer
+  editor
+  dev
+  owner
+}
+
+
+
+model fields {
+  id         Int    @id @default(autoincrement())
+  section_id Int?
+  post_id    Int?
+  name       String    @db.VarChar(255)
+  slug       String    @db.VarChar(255)
+  type       FieldType
+  value_en   String?   @db.Text
+  value_ua   String?   @db.Text
+  file_url   String?  @db.VarChar(255)
+  posts      posts?    @relation(fields: [post_id], references: [id])
+  sections   sections? @relation(fields: [section_id], references: [id])
+
+  @@unique([post_id, slug], map: "post_id_slug")
+  @@unique([section_id, slug], map: "section_id_slug")
+}
+
+enum FieldType {
+  text
+  file
+}
+
+model pages {
+  id       Int      @id @default(autoincrement())
+  name     String   @db.VarChar(255)
+  slug     String   @unique(map: "slug") @db.VarChar(255)
+  sections sections[]
+}
+
+model posts {
+  id     Int    @id @default(autoincrement())
+  name   String @db.VarChar(255)
+  category   String @db.VarChar(255)
+  fields fields[]
+}
+
+model sections {
+  id      Int    @id @default(autoincrement())
+  page_id Int
+  name    String @db.VarChar(255)
+  slug    String @db.VarChar(255)
+  pages   pages? @relation(fields: [page_id], references: [id])
+  fields  fields[]
+
+  @@unique([page_id, slug], map: "page_id_slug")
+}
