@@ -24,7 +24,8 @@ export class SectionsService {
         },
       });
 
-      const baseUrl = process.env.BACKEND_URL || 'http://localhost:4000';
+      const baseUrl =
+        process.env.BACKEND_URL || `http://localhost:${process.env.PORT}`;
 
       page.sections.forEach((section) => {
         section.fields.forEach((field) => {

@@ -41,7 +41,8 @@ export class ContentService {
         }),
       ]);
 
-      const baseUrl = process.env.BACKEND_URL || 'http://localhost:4000';
+      const baseUrl =
+        process.env.BACKEND_URL || `http://localhost:${process.env.PORT}`;
 
       const formattedPages = pages.reduce((acc, page) => {
         acc[page.slug] = {};
